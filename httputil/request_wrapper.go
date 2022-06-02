@@ -11,13 +11,16 @@ import (
 
 // RequestWrapper a struct that centralizes request modifications.
 type RequestWrapper struct {
+	MonitoringConfig
+
 	http.Request
 }
 
 // WrapRequest to get a new instance of RequestWrapper.
-func WrapRequest(request http.Request) RequestWrapper {
+func WrapRequest(request http.Request, monitoringConfig MonitoringConfig) RequestWrapper {
 	return RequestWrapper{
-		request,
+		MonitoringConfig: monitoringConfig,
+		Request:          request,
 	}
 }
 

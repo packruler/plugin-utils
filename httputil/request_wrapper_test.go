@@ -50,6 +50,11 @@ func TestGetEncodingTarget(t *testing.T) {
 		},
 	}
 
+	defaultMonitoring := MonitoringConfig{
+		MonitoredTypes:   []string{"text/html"},
+		MonitoredMethods: []string{"GET"},
+	}
+
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
 			request, err := http.NewRequestWithContext(
@@ -62,7 +67,7 @@ func TestGetEncodingTarget(t *testing.T) {
 			}
 			request.Header.Set("Accept-Encoding", test.acceptEncoding)
 
-			wrappedRequest := WrapRequest(*request)
+			wrappedRequest := WrapRequest(*request, defaultMonitoring)
 			target := wrappedRequest.GetEncodingTarget()
 			if target != test.expectedTarget {
 				t.Errorf("Expected: '%s' | Got: '%s'", test.expectedTarget, target)
@@ -109,6 +114,11 @@ func TestRemoveUnuspportedEncoding(t *testing.T) {
 		},
 	}
 
+	defaultMonitoring := MonitoringConfig{
+		MonitoredTypes:   []string{"text/html"},
+		MonitoredMethods: []string{"GET"},
+	}
+
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
 			request, err := http.NewRequestWithContext(
@@ -121,7 +131,7 @@ func TestRemoveUnuspportedEncoding(t *testing.T) {
 			}
 			request.Header.Set("Accept-Encoding", test.acceptEncoding)
 
-			wrappedRequest := WrapRequest(*request)
+			wrappedRequest := WrapRequest(*request, defaultMonitoring)
 			target := wrappedRequest.CloneWithSupportedEncoding().Header.Get("Accept-Encoding")
 
 			if target != test.expectedTarget {
