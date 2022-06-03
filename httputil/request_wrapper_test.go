@@ -146,3 +146,96 @@ func TestRemoveUnuspportedEncoding(t *testing.T) {
 		})
 	}
 }
+
+func TestSupportsProcessing(t *testing.T) {
+	tests := []struct {
+		desc             string
+		inputType        string
+		inputMethod      string
+		monitoringConfig MonitoringConfig
+		expectedSupport  bool
+	}{
+		{
+			desc:            "Supports default config",
+			inputType:       "text/html",
+			inputMethod:     http.MethodGet,
+			expectedSupport: true,
+			monitoringConfig: MonitoringConfig{
+				MonitoredTypes:   []string{"text/html"},
+				MonitoredMethods: []string{"GET"},
+			},
+		},
+		{
+			desc:            "Supports default browser load",
+			inputType:       "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+			inputMethod:     http.MethodGet,
+			expectedSupport: true,
+			monitoringConfig: MonitoringConfig{
+				MonitoredTypes:   []string{"text/html"},
+				MonitoredMethods: []string{"GET"},
+			},
+		},
+		{
+			desc:            "Supports when types includes unsupported type first",
+			inputType:       "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+			inputMethod:     http.MethodGet,
+			expectedSupport: true,
+			monitoringConfig: MonitoringConfig{
+				MonitoredTypes:   []string{"application/javascript", "text/html"},
+				MonitoredMethods: []string{"GET"},
+			},
+		},
+		{
+			desc:            "Supports multiple methods",
+			inputType:       "text/html",
+			inputMethod:     http.MethodPost,
+			expectedSupport: true,
+			monitoringConfig: MonitoringConfig{
+				MonitoredTypes:   []string{"text/html"},
+				MonitoredMethods: []string{"GET", "POST"},
+			},
+		},
+		{
+			desc:            "Does not support type not included",
+			inputType:       "application/javascript",
+			inputMethod:     http.MethodGet,
+			expectedSupport: false,
+			monitoringConfig: MonitoringConfig{
+				MonitoredTypes:   []string{"text/html"},
+				MonitoredMethods: []string{"GET"},
+			},
+		},
+		{
+			desc:            "Does not support method not included",
+			inputType:       "text/html",
+			inputMethod:     http.MethodPost,
+			expectedSupport: false,
+			monitoringConfig: MonitoringConfig{
+				MonitoredTypes:   []string{"text/html"},
+				MonitoredMethods: []string{"GET"},
+			},
+		},
+	}
+
+	defaultLogWriter := logger.CreateLogger(logger.Error)
+
+	for _, test := range tests {
+		t.Run(test.desc, func(t *testing.T) {
+			request, err := http.NewRequestWithContext(
+				context.Background(),
+				test.inputMethod,
+				"http://google.com",
+				&bytes.Reader{})
+			if err != nil {
+				t.Errorf("Error creating request: %v", err)
+			}
+			request.Header.Set("Accept", test.inputType)
+
+			wrappedRequest := WrapRequest(*request, test.monitoringConfig, *defaultLogWriter)
+
+			if test.expectedSupport != wrappedRequest.SupportsProcessing() {
+				t.Errorf("Test input: '%v'", test)
+			}
+		})
+	}
+}

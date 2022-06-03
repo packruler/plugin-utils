@@ -51,6 +51,8 @@ issues:
         - goconst
         - funlen
         - godot
+        - line-length
+        - lll
     - path: themepark.go:95
       linters:
         - line-length

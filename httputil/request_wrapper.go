@@ -28,8 +28,8 @@ func WrapRequest(request http.Request, monitoringConfig MonitoringConfig, logWri
 }
 
 // CloneNoEncode create an http.Request that request no encoding.
-func (req *RequestWrapper) CloneNoEncode() (clonedRequest *http.Request) {
-	clonedRequest = req.Clone(req.Context())
+func (req *RequestWrapper) CloneNoEncode() *http.Request {
+	clonedRequest := req.Clone(req.Context())
 
 	clonedRequest.Header.Set("Accept-Encoding", compressutil.Identity)
 
@@ -37,8 +37,8 @@ func (req *RequestWrapper) CloneNoEncode() (clonedRequest *http.Request) {
 }
 
 // CloneWithSupportedEncoding create an http.Request that request only supported encoding.
-func (req *RequestWrapper) CloneWithSupportedEncoding() (clonedRequest *http.Request) {
-	clonedRequest = req.Clone(req.Context())
+func (req *RequestWrapper) CloneWithSupportedEncoding() *http.Request {
+	clonedRequest := req.Clone(req.Context())
 
 	clonedRequest.Header.Set("Accept-Encoding", removeUnsupportedAcceptEncoding(clonedRequest.Header))
 
@@ -75,14 +75,14 @@ type encodingSpec struct {
 	Quality float64
 }
 
-func parseAcceptEncoding(header http.Header) (result []encodingSpec) {
+func parseAcceptEncoding(header http.Header) []encodingSpec {
 	encodingHeader := header.Get("Accept-Encoding")
 	if encodingHeader == "*" {
 		return []encodingSpec{{Quality: 1.0, Value: compressutil.Gzip}, {Quality: 1.0, Value: compressutil.Deflate}}
 	}
 
 	encodingList := strings.Split(encodingHeader, ",")
-	result = make([]encodingSpec, 0, len(encodingList))
+	result := make([]encodingSpec, 0, len(encodingList))
 
 	for _, encoding := range encodingList {
 		result = append(result, parseEncodingItem(encoding))
@@ -130,14 +130,28 @@ func removeUnsupportedAcceptEncoding(header http.Header) string {
 // SupportsProcessing determine if http.Request is supported by this plugin.
 func (req *RequestWrapper) SupportsProcessing() bool {
 	acceptHeader := req.Header.Get("Accept")
+	isSupported := false
+
 	for _, monitoredType := range req.monitoring.MonitoredTypes {
-		if !strings.Contains(acceptHeader, monitoredType) {
-			return false
+		if strings.Contains(acceptHeader, monitoredType) {
+			isSupported = true
 		}
 	}
 
+	if !isSupported {
+		return false
+	}
+
+	isSupported = false
+
 	// Ignore non GET requests
-	if req.Method != http.MethodGet {
+	for _, monitoredMethod := range req.monitoring.MonitoredMethods {
+		if strings.Contains(req.Method, monitoredMethod) {
+			isSupported = true
+		}
+	}
+
+	if !isSupported {
 		return false
 	}
 

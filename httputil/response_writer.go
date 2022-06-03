@@ -34,10 +34,13 @@ func WrapWriter(
 	logWriter logger.LogWriter,
 ) ResponseWrapper {
 	return ResponseWrapper{
+		buffer:         bytes.Buffer{},
+		lastModified:   true,
+		wroteHeader:    false,
+		code:           http.StatusOK,
 		logWriter:      logWriter,
 		monitoring:     monitoringConfig,
 		ResponseWriter: responseWriter,
-		lastModified:   true,
 	}
 }
 
