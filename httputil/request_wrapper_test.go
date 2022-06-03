@@ -5,6 +5,8 @@ import (
 	"context"
 	"net/http"
 	"testing"
+
+	"github.com/packruler/plugin-utils/logger"
 )
 
 func TestGetEncodingTarget(t *testing.T) {
@@ -55,6 +57,8 @@ func TestGetEncodingTarget(t *testing.T) {
 		MonitoredMethods: []string{"GET"},
 	}
 
+	defaultLogWriter := logger.CreateLogger(logger.Error)
+
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
 			request, err := http.NewRequestWithContext(
@@ -67,7 +71,7 @@ func TestGetEncodingTarget(t *testing.T) {
 			}
 			request.Header.Set("Accept-Encoding", test.acceptEncoding)
 
-			wrappedRequest := WrapRequest(*request, defaultMonitoring)
+			wrappedRequest := WrapRequest(*request, defaultMonitoring, *defaultLogWriter)
 			target := wrappedRequest.GetEncodingTarget()
 			if target != test.expectedTarget {
 				t.Errorf("Expected: '%s' | Got: '%s'", test.expectedTarget, target)
@@ -119,6 +123,8 @@ func TestRemoveUnuspportedEncoding(t *testing.T) {
 		MonitoredMethods: []string{"GET"},
 	}
 
+	defaultLogWriter := logger.CreateLogger(logger.Error)
+
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
 			request, err := http.NewRequestWithContext(
@@ -131,7 +137,7 @@ func TestRemoveUnuspportedEncoding(t *testing.T) {
 			}
 			request.Header.Set("Accept-Encoding", test.acceptEncoding)
 
-			wrappedRequest := WrapRequest(*request, defaultMonitoring)
+			wrappedRequest := WrapRequest(*request, defaultMonitoring, *defaultLogWriter)
 			target := wrappedRequest.CloneWithSupportedEncoding().Header.Get("Accept-Encoding")
 
 			if target != test.expectedTarget {
