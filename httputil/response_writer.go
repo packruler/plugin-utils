@@ -32,8 +32,8 @@ func WrapWriter(
 	responseWriter http.ResponseWriter,
 	monitoringConfig MonitoringConfig,
 	logWriter logger.LogWriter,
-) ResponseWrapper {
-	return ResponseWrapper{
+) *ResponseWrapper {
+	return &ResponseWrapper{
 		buffer:         bytes.Buffer{},
 		lastModified:   true,
 		wroteHeader:    false,

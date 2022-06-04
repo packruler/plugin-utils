@@ -15,12 +15,12 @@ type RequestWrapper struct {
 	logWriter  logger.LogWriter
 	monitoring MonitoringConfig
 
-	http.Request
+	*http.Request
 }
 
 // WrapRequest to get a new instance of RequestWrapper.
-func WrapRequest(request http.Request, monitoringConfig MonitoringConfig, logWriter logger.LogWriter) RequestWrapper {
-	return RequestWrapper{
+func WrapRequest(request *http.Request, monitoringConfig MonitoringConfig, logWriter logger.LogWriter) *RequestWrapper {
+	return &RequestWrapper{
 		logWriter:  logWriter,
 		monitoring: monitoringConfig,
 		Request:    request,
