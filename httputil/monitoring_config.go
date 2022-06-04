@@ -8,8 +8,8 @@ import (
 // MonitoringConfig structure of data for handling configuration for
 // controlling what content is monitored.
 type MonitoringConfig struct {
-	MonitoredTypes   []string
-	MonitoredMethods []string
+	MonitoredTypes   []string `json:"types,omitempty" yaml:"types,omitempty" toml:"types,omitempty"`
+	MonitoredMethods []string `json:"methods,omitempty" yaml:"methods,omitempty" toml:"methods,omitempty"`
 }
 
 // ParseMonitoringConfig parse types and methods strings into MonitoringConfig.
