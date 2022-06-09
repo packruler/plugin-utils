@@ -56,23 +56,23 @@ func TestMonitoringConfigParsing(t *testing.T) {
 		t.Run(test.desc, func(t *testing.T) {
 			config := httputil.ParseMonitoringConfig(test.inputTypes, test.inputMethods)
 
-			if len(config.MonitoredTypes) != len(test.expectedTypes) {
-				t.Errorf("Expected Types: '%v' | Got Types: '%v'", test.expectedTypes, config.MonitoredTypes)
+			if len(config.Types) != len(test.expectedTypes) {
+				t.Errorf("Expected Types: '%v' | Got Types: '%v'", test.expectedTypes, config.Types)
 			}
 
 			for i, v := range test.expectedTypes {
-				if v != config.MonitoredTypes[i] {
-					t.Errorf("Expected Types: '%v' | Got Types: '%v'", test.expectedTypes, config.MonitoredTypes)
+				if v != config.Types[i] {
+					t.Errorf("Expected Types: '%v' | Got Types: '%v'", test.expectedTypes, config.Types)
 				}
 			}
 
-			if len(config.MonitoredMethods) != len(test.expectedMethods) {
-				t.Errorf("Expected Methods: '%v' | Got Methods: '%v'", test.expectedMethods, config.MonitoredMethods)
+			if len(config.Methods) != len(test.expectedMethods) {
+				t.Errorf("Expected Methods: '%v' | Got Methods: '%v'", test.expectedMethods, config.Methods)
 			}
 
 			for i, v := range test.expectedMethods {
-				if v != config.MonitoredMethods[i] {
-					t.Errorf("Expected Methods: '%v' | Got Methods: '%v'", test.expectedMethods, config.MonitoredMethods)
+				if v != config.Methods[i] {
+					t.Errorf("Expected Methods: '%v' | Got Methods: '%v'", test.expectedMethods, config.Methods)
 				}
 			}
 		})

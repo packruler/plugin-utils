@@ -53,8 +53,8 @@ func TestGetEncodingTarget(t *testing.T) {
 	}
 
 	defaultMonitoring := MonitoringConfig{
-		MonitoredTypes:   []string{"text/html"},
-		MonitoredMethods: []string{"GET"},
+		Types:   []string{"text/html"},
+		Methods: []string{"GET"},
 	}
 
 	defaultLogWriter := logger.CreateLogger(logger.Error)
@@ -119,8 +119,8 @@ func TestRemoveUnuspportedEncoding(t *testing.T) {
 	}
 
 	defaultMonitoring := MonitoringConfig{
-		MonitoredTypes:   []string{"text/html"},
-		MonitoredMethods: []string{"GET"},
+		Types:   []string{"text/html"},
+		Methods: []string{"GET"},
 	}
 
 	defaultLogWriter := logger.CreateLogger(logger.Error)
@@ -161,8 +161,8 @@ func TestSupportsProcessing(t *testing.T) {
 			inputMethod:     http.MethodGet,
 			expectedSupport: true,
 			monitoringConfig: MonitoringConfig{
-				MonitoredTypes:   []string{"text/html"},
-				MonitoredMethods: []string{"GET"},
+				Types:   []string{"text/html"},
+				Methods: []string{"GET"},
 			},
 		},
 		{
@@ -171,8 +171,8 @@ func TestSupportsProcessing(t *testing.T) {
 			inputMethod:     http.MethodGet,
 			expectedSupport: true,
 			monitoringConfig: MonitoringConfig{
-				MonitoredTypes:   []string{"text/html"},
-				MonitoredMethods: []string{"GET"},
+				Types:   []string{"text/html"},
+				Methods: []string{"GET"},
 			},
 		},
 		{
@@ -181,8 +181,8 @@ func TestSupportsProcessing(t *testing.T) {
 			inputMethod:     http.MethodGet,
 			expectedSupport: true,
 			monitoringConfig: MonitoringConfig{
-				MonitoredTypes:   []string{"application/javascript", "text/html"},
-				MonitoredMethods: []string{"GET"},
+				Types:   []string{"application/javascript", "text/html"},
+				Methods: []string{"GET"},
 			},
 		},
 		{
@@ -191,8 +191,8 @@ func TestSupportsProcessing(t *testing.T) {
 			inputMethod:     http.MethodPost,
 			expectedSupport: true,
 			monitoringConfig: MonitoringConfig{
-				MonitoredTypes:   []string{"text/html"},
-				MonitoredMethods: []string{"GET", "POST"},
+				Types:   []string{"text/html"},
+				Methods: []string{"GET", "POST"},
 			},
 		},
 		{
@@ -201,8 +201,8 @@ func TestSupportsProcessing(t *testing.T) {
 			inputMethod:     http.MethodGet,
 			expectedSupport: false,
 			monitoringConfig: MonitoringConfig{
-				MonitoredTypes:   []string{"text/html"},
-				MonitoredMethods: []string{"GET"},
+				Types:   []string{"text/html"},
+				Methods: []string{"GET"},
 			},
 		},
 		{
@@ -211,8 +211,8 @@ func TestSupportsProcessing(t *testing.T) {
 			inputMethod:     http.MethodPost,
 			expectedSupport: false,
 			monitoringConfig: MonitoringConfig{
-				MonitoredTypes:   []string{"text/html"},
-				MonitoredMethods: []string{"GET"},
+				Types:   []string{"text/html"},
+				Methods: []string{"GET"},
 			},
 		},
 	}
